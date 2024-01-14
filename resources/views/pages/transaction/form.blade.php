@@ -8,9 +8,9 @@
 
     <x-date-input id="transaction-due-on" label="{{ __('common.due_on')}}" name="due_on" type="text" :entity="$transaction ?? null" />
 
-    <x-input id="transaction-vat" label="{{ __('common.vat')}}" name="vat" :entity="$transaction ?? ''"/>
+    <x-input id="transaction-vat" required="0" label="{{ __('common.vat')}}" name="vat" :entity="$transaction ?? ''"/>
 
-    <x-switch-input id="transaction-is-vat-inclusive" label="{{ __('common.is_vat_inclusive')}}" name="is_vat_inclusive" :entity="$transaction ?? null"/>
+    <x-switch-input id="transaction-is-vat-inclusive" required="0" label="{{ __('common.is_vat_inclusive')}}" name="is_vat_inclusive" :entity="$transaction ?? null"/>
 
 
     @if(isset($source) && $source == 'update')

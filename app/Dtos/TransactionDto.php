@@ -4,7 +4,7 @@ namespace App\Dtos;
 
 class TransactionDto
 {
-    public function __construct(private float $amount, private int $userId, private string $dueOn, private int $vat, private bool $isVatInclusive) { }
+    public function __construct(private float $amount, private int $userId, private string $dueOn, private ?int $vat, private ?bool $isVatInclusive) { }
 
     public function getAmount(): float
     {
@@ -23,11 +23,11 @@ class TransactionDto
 
     public function getVat(): int
     {
-        return $this->vat;
+        return $this->vat ?? 0;
     }
 
     public function getIsVatInclusive(): bool
     {
-        return $this->isVatInclusive;
+        return $this->isVatInclusive ?? false;
     }
 }

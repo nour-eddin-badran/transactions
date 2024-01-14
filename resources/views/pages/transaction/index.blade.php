@@ -38,7 +38,7 @@
                                 <th>{{__('common.payments_count')}}</th>
                                 <th>{{__('common.remaining')}}</th>
                                 <th>{{__('common.vat')}}</th>
-                                <th>{{__('common.is_vat_inclusive')}}</th>
+{{--                                <th>{{__('common.is_vat_inclusive')}}</th>--}}
                                 <th>{{__('common.created_at')}}</th>
                             </tr>
                             </thead>
@@ -53,7 +53,7 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td></td>
+{{--                                <td></td>--}}
                                 <td></td>
                             </tr>
                             </tfoot>
@@ -97,7 +97,7 @@
                     {data: 'payments_count', name: 'payments_count'},
                     {data: 'remaining', name: 'remaining'},
                     {data: 'vat', name: 'vat'},
-                    {data: 'is_vat_inclusive', name: 'is_vat_inclusive'},
+                    // {data: 'is_vat_inclusive', name: 'is_vat_inclusive'},
                     {data: 'created_at', name: 'created_at'},
                 ],
             });

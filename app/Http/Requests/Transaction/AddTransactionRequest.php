@@ -19,10 +19,17 @@ class AddTransactionRequest extends FormRequest
     {
         return [
             'amount' => 'required',
-            'user_id' => 'required',
+            'user_id' => ['required', 'exists:users,id'],
             'due_on' => 'required',
-            'vat' => 'required',
-            'is_vat_inclusive' => 'required',
+            'vat' => Rule::requiredIf(fn() => \request()->get('is_vat_inclusive') == "false"),
+            'is_vat_inclusive' => 'nullable',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'vat.required' => __('messages.vat_is_required')
         ];
     }
 }

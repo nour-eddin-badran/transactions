@@ -117,3 +117,11 @@ if (!function_exists('getRoles')) {
         return $roles->where($where)->first()->toArray();
     }
 }
+
+
+if (!function_exists('addPercentage')) {
+    function addPercentage(float $amount, float $vat): float
+    {
+        return $amount + ($amount * ($vat / 100));
+    }
+}

@@ -14,6 +14,7 @@ use App\Modules\EnumManager\Enums\PermissionTypeEnum;
 use App\Modules\EnumManager\Enums\RoleTypeEnum;
 use App\Services\BaseService;
 use Illuminate\Http\Response;
+use Carbon\Carbon;
 
 class TransactionService extends BaseService
 {
@@ -36,8 +37,14 @@ class TransactionService extends BaseService
 
     public function add(TransactionDto $transactionDto): void
     {
-        $transaction = $this->transaction->create([
-            'amount' => $transactionDto->getAmount(),
+        $amount = $transactionDto->getAmount();
+
+        if (!$transactionDto->getIsVatInclusive()) {
+            $amount = addPercentage(amount: $amount, vat: $transactionDto->getVat());
+        }
+
+        $this->transaction->create([
+            'amount' => $amount,
             'user_id' => $transactionDto->getUserId(),
             'due_on' => strtotime($transactionDto->getDueOn()),
             'vat' => $transactionDto->getVat(),

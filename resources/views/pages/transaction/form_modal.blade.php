@@ -16,8 +16,6 @@
                 amount: "transaction-amount",
                 user_id: "transaction-user-id",
                 due_on: "transaction-due-on",
-                vat: "transaction-vat",
-                is_vat_inclusive: "transaction-is-vat-inclusive",
             }
         </script>
     </x-slot>
