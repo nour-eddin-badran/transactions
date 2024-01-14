@@ -33,49 +33,31 @@ class ReportService extends BaseService
         }
         $targetedMonths = implode(',', $monthsArray);
 
-        //TODO need to be refactored more
-        $result = DB::table(DB::raw("
-        (SELECT
-            t1.targeted_months,
-            t1.paid,
-            (t2.outstanding - t1.paid) as outstanding,
-            (t3.outstanding - t1.paid) as overdue
-        FROM
-            (SELECT
-                DATE_FORMAT(FROM_UNIXTIME(paid_on), '%Y-%m') as targeted_months,
-                SUM(amount) as paid
-            FROM
-                `transaction_payments`
-            WHERE
-                DATE_FORMAT(FROM_UNIXTIME(paid_on), '%Y-%m') IN ({$targetedMonths})
-            GROUP BY
-                DATE_FORMAT(FROM_UNIXTIME(paid_on), '%Y-%m')) as t1
-        LEFT OUTER JOIN
-            (SELECT
-                DATE_FORMAT(FROM_UNIXTIME(due_on), '%Y-%m') as targeted_months,
-                SUM(amount) as outstanding
-            FROM
-                transactions
-            WHERE
-                FROM_UNIXTIME(due_on) >= NOW()
-            GROUP BY
-                DATE_FORMAT(FROM_UNIXTIME(due_on), '%Y-%m')) as t2
-        ON
-            t1.targeted_months = t2.targeted_months
+        $subquery1 = DB::table('transaction_payments')->whereRaw("DATE_FORMAT(FROM_UNIXTIME(paid_on), '%Y-%m') IN ({$targetedMonths})")
+            ->groupByRaw("DATE_FORMAT(FROM_UNIXTIME(paid_on), '%Y-%m')")
+            ->selectRaw("DATE_FORMAT(FROM_UNIXTIME(paid_on), '%Y-%m') as targeted_months,
+                SUM(amount) as paid");
 
-        LEFT OUTER JOIN
-            (SELECT
-                DATE_FORMAT(FROM_UNIXTIME(due_on), '%Y-%m') as targeted_months,
-                SUM(amount) as outstanding
-            FROM
-                transactions
-            WHERE
-                FROM_UNIXTIME(due_on) < NOW()
-            GROUP BY
-                DATE_FORMAT(FROM_UNIXTIME(due_on), '%Y-%m')) as t3
-        ON
-            t1.targeted_months = t3.targeted_months) AS outer_query;
-"))->get();
+
+        $subquery2 = DB::table('transactions')->whereRaw("FROM_UNIXTIME(transactions.due_on) >= NOW()")
+            ->groupByRaw("DATE_FORMAT(FROM_UNIXTIME(transactions.due_on), '%Y-%m')")
+            ->selectRaw("DATE_FORMAT(FROM_UNIXTIME(due_on), '%Y-%m') as targeted_months,
+                SUM(amount) as outstanding");
+
+        $subquery3 = DB::table('transactions')->whereRaw("FROM_UNIXTIME(due_on) < NOW()")
+            ->groupByRaw("DATE_FORMAT(FROM_UNIXTIME(transactions.due_on), '%Y-%m')")
+            ->selectRaw(" DATE_FORMAT(FROM_UNIXTIME(due_on), '%Y-%m') as targeted_months,
+                            SUM(amount) as overdue");
+
+        $result = DB::table(DB::raw("({$subquery1->toSql()}) as t1"))
+            ->leftJoin(DB::raw("({$subquery2->toSql()}) as t2"), 't1.targeted_months', '=', 't2.targeted_months')
+            ->leftJoin(DB::raw("({$subquery3->toSql()}) as t3"), 't1.targeted_months', '=', 't3.targeted_months')
+            ->select([
+                't1.targeted_months',
+                't1.paid',
+                DB::raw('(t2.outstanding - t1.paid) as outstanding'),
+                DB::raw('(t3.overdue - t1.paid) as overdue')
+            ])->get();
 
         $data = json_decode(json_encode($result->toArray()), true);
 
