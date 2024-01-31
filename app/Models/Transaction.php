@@ -23,16 +23,6 @@ class Transaction extends Model
         return (new Carbon($dueOn))->toDateString();
     }
 
-    public function getAmountAttribute($amount)
-    {
-        if ((bool)$this->is_vat_inclusive) {
-            return $amount;
-        }
-
-        $vat = $this->vat / 100;
-        return $amount + ($amount * $vat);
-    }
-
     public function getStatusAttribute(): string
     {
         $totalPaid = $this->payments->sum('amount');

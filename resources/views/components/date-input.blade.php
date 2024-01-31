@@ -20,15 +20,15 @@
     <script>
         $(function() {
             'use strict';
-
+            <?php
+                $format =  $viewMode == '1' ? "yyyy-mm" : "yyyy-mm-dd"
+                ?>
             if($("#{{$id}}DatePicker").length) {
-                var date = new Date();
-                var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
                 $("#{{$id}}DatePicker").datepicker({
-                    format: "yyyy/mm/dd",
+                    format: "{{$format}}",
                     todayHighlight: true,
-                    // startDate: today,
-                    autoclose: true
+                    autoclose: true,
+                    minViewMode: "{{$viewMode}}"
                 });
                 $("#{{$id}}DatePicker").datepicker('setDate', new Date($("#{{$id}}").val()));
             }

@@ -18,17 +18,20 @@ class DateInput extends Component
 
     public $required;
 
+    public $viewMode;
+
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($id, $label, $name, $required = true, $step = null, $type = null)
+    public function __construct($id, $label, $name, $viewMode = 0, $required = true, $step = null, $type = null)
     {
         $this->id = $id;
         $this->label = $label;
         $this->name = $name;
         $this->type = $type;
+        $this->viewMode = $viewMode;
         $this->required = $required;
         $this->step = $step;
     }

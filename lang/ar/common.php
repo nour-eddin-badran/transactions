@@ -21,7 +21,7 @@ return [
     'to' => 'إلى تاريخ',
     'payments_count' => 'عدد الدفعات',
     'remaining' => 'المتبقي',
-
+    'generate' => 'توليد',
 
     'article' => 'مقالة',
     'articles' => 'المقالات',
